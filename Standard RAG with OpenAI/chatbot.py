@@ -46,6 +46,7 @@ llm = ChatGoogleGenerativeAI(
 num_results = 5
 simscore_threshold = 0.5
 
+# Fix to resolve re-current re-initialisation. Cache_resource makes sure this only occurs once.
 @st.cache_resource
 def initialize_embeddings_and_retriever():
     """Initialize embeddings and retriever - cached to avoid re-initialization"""
