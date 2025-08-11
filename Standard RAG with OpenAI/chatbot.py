@@ -12,14 +12,6 @@ DATA_PATH = r"data"
 PINECONE_API_KEY = st.secrets.get("PINECONE_API_KEY")
 GOOGLE_API_KEY = st.secrets.get("GOOGLE_API_KEY")
 
-# Check for existence of key, and if not, error in the chatbot UI
-if not PINECONE_API_KEY:
-    st.error("ERROR: PINECONE_API_KEY not functional, check Streamlit secrets")
-    st.stop()
-if not GOOGLE_API_KEY:
-    st.error("ERROR: GOOGLE_API_KEY not functional, check Streamlit secrets")
-    st.stop()
-
 # Initialise Pinecone
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
@@ -50,31 +42,40 @@ llm = ChatGoogleGenerativeAI(
     max_retries=3,
 )
 
-# Initialise GoogleGeminiAI embeddings
-# Using text-embedding-004 model which produces 1024 dimensions
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/text-embedding-004",  # This model produces 1024 dimensions
-    google_api_key=GOOGLE_API_KEY
-)
-
-# Initialise and connect vector store
-vector_store = PineconeVectorStore(
-    index=index, 
-    embedding=embeddings, 
-    text_key="text"
-)
-
-# Set up the vectorstore to be the retriever
+# Configuration for embeddings and retrieval
 num_results = 5
 simscore_threshold = 0.5
-retriever = vector_store.as_retriever(
-    search_type="similarity_score_threshold",
-    search_kwargs={"k": num_results, "score_threshold": simscore_threshold}
-)
+
+@st.cache_resource
+def initialize_embeddings_and_retriever():
+    """Initialize embeddings and retriever - cached to avoid re-initialization"""
+    # Initialise GoogleGeminiAI embeddings
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model="models/text-embedding-004",  # 1024 dimensions
+        google_api_key=GOOGLE_API_KEY
+    )
+    
+    # Initialise and connect vector store
+    vector_store = PineconeVectorStore(
+        index=index, 
+        embedding=embeddings, 
+        text_key="text"
+    )
+    
+    # Set up the vectorstore to be the retriever
+    retriever = vector_store.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={"k": num_results, "score_threshold": simscore_threshold}
+    )
+    
+    return retriever
 
 # Function to get response from RAG system (Fixed for Streamlit)
 def get_rag_response(message, chat_history):
     try:
+        # Get the retriever (this will use cached version after first call)
+        retriever = initialize_embeddings_and_retriever()
+        
         # Retrieve the relevant chunks based on the question asked
         docs = retriever.invoke(message)
 
@@ -114,7 +115,7 @@ def get_rag_response(message, chat_history):
     except Exception as e:
         return f"Error: {str(e)}"
 
-# Streamlit Application UI Generated with Claude Assistance
+# Streamlit App
 def main():
     st.set_page_config(
         page_title="AI Standards RAG Chatbot",
@@ -168,7 +169,7 @@ def main():
         st.markdown("### About")
         st.markdown("This chatbot uses:")
         st.markdown("- **Pinecone** for vector storage")
-        st.markdown("- **Google Gemini - Gemini-Pro** for LLM")
+        st.markdown("- **Google Gemini** for LLM")
         st.markdown("- **RAG** for knowledge-based answers")
         
         st.markdown("### Settings")
