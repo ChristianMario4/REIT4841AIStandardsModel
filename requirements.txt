@@ -1,0 +1,10 @@
+# Required dependencies that are not built-in
+pinecone-client>=3.0.0
+langchain-text-splitters>=0.3.0
+langchain-pinecone>=0.1.0
+langchain-google-genai>=0.1.0
+langchain-community>=0.0.10
+langchain>=0.1.0
+pypdf>=3.17.0
+python-dotenv>=1.0.0
+streamlit>=1.32.0
