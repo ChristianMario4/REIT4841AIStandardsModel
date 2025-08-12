@@ -123,16 +123,19 @@ def get_rag_response(message, chat_history):
 
         # Make the call to the LLM (including prompt)
         rag_prompt = f"""
-        You are an assistant which answers questions based on knowledge which is provided to you.
-        While answering, you don't use your internal knowledge, 
-        but solely the information in the "The knowledge" section.
-        You don't mention anything to the user about the provided knowledge.
+        You are a helpful assistant that answers questions using the provided context as your primary source. 
+        Always check the "Knowledge" section first when forming your answer. 
+        If the context does not fully answer the question, use your own general knowledge to fill in the gaps, 
+        but clearly indicate which parts come from outside the provided context. 
+
+        Be accurate, clear, and concise in your responses.
+        Tell the user which document you are retrieving information from.
 
         The question: {message}
 
         Conversation history: {history_str}
 
-        The knowledge: {knowledge}
+        Knowledge: {knowledge}
         """
 
         # Invoke the response
