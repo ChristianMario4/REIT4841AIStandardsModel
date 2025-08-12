@@ -1,4 +1,3 @@
-import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
@@ -7,17 +6,27 @@ from pinecone import Pinecone
 from pinecone.models import ServerlessSpec
 import streamlit as st
 
+# Initialise UI
+st.set_page_config(
+    page_title="AI Standards RAG Chatbot",
+    page_icon="🤖",
+    layout="wide"
+)
+    
+st.title("🤖 AI Standards RAG Chatbot")
+st.markdown("Ask questions about AI standards based on your knowledge base!")
+
 # configuration
 DATA_PATH = r"data"
 PINECONE_API_KEY = st.secrets.get("PINECONE_API_KEY")
 GOOGLE_API_KEY = st.secrets.get("GOOGLE_API_KEY")
+index_name = "reit4841-aistandards"
 
 # Initialise Pinecone
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
 # Initialise the index for Pinecone DB -> code from Pinecone Docos
 # http://app.pinecone.io/organizations/-OWEHQS7XzaN5h_xkrqU/projects/96720a04-95b1-489f-b947-fab8f69ee540/create-index/serverless
-index_name = "reit4841-aistandards"
 
 if not pc.has_index(index_name):
     st.info(f"Creating new index: {index_name}")
@@ -34,13 +43,7 @@ st.info(f"Using existing index: {index_name}")
 index = pc.Index(index_name)
 
 # initialise the model, setting it to have 0 creativity in response (temp), no response size limit, reasonable timeout
-llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    temperature=0,
-    max_tokens=None,
-    timeout=30,
-    max_retries=3,
-)
+
 
 # Configuration for embeddings and retrieval
 num_results = 5
@@ -70,6 +73,20 @@ def initialize_embeddings_and_retriever():
     )
     
     return retriever
+
+# Initialize LLM
+@st.cache_resource
+def initialize_llm():
+    """Initialize OpenAI LLM - cached to avoid re-initialization"""
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-pro",
+        temperature=0,
+        max_tokens=None,
+        timeout=30,
+        max_retries=3,
+)
+
+llm = initialize_llm()
 
 # Function to get response from RAG system (Fixed for Streamlit)
 def get_rag_response(message, chat_history):
@@ -118,14 +135,6 @@ def get_rag_response(message, chat_history):
 
 # Streamlit App
 def main():
-    st.set_page_config(
-        page_title="AI Standards RAG Chatbot",
-        page_icon="🤖",
-        layout="wide"
-    )
-    
-    st.title("🤖 AI Standards RAG Chatbot")
-    st.markdown("Ask questions about AI standards based on your knowledge base!")
     
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -180,7 +189,7 @@ def main():
 
         st.markdown("### Acknowledgements")
         st.markdown("The following are inspirations for the development of this chatbot")
-        st.markdown("Thomas Janssen - https://www.youtube.com/watch?v=A3WKdt_MNZQ&t=6s")
+        st.markdown("Thomas Janssen - ")
         
         if st.button("Clear Chat History"):
             st.session_state.messages = []
