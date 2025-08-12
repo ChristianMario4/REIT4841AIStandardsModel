@@ -4,6 +4,8 @@ from langchain_pinecone import PineconeVectorStore
 from langchain.schema import SystemMessage
 from pinecone import Pinecone
 from pinecone.models import ServerlessSpec
+import asyncio
+import nest_asyncio
 import streamlit as st
 
 # Initialise UI
@@ -52,7 +54,16 @@ simscore_threshold = 0.5
 # Fix to resolve re-current re-initialisation. Cache_resource makes sure this only occurs once.
 @st.cache_resource
 def initialize_embeddings_and_retriever():
-    """Initialize embeddings and retriever - cached to avoid re-initialization"""
+    
+    """Setting asyncio event loop inside initialization so they run on the same thread"""
+    nest_asyncio.apply()
+    
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    
     # Initialise GoogleGeminiAI embeddings
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/text-embedding-004",  # 1024 dimensions
@@ -189,7 +200,7 @@ def main():
 
         st.markdown("### Acknowledgements")
         st.markdown("The following are inspirations for the development of this chatbot")
-        st.markdown("Thomas Janssen - ")
+        st.markdown("Thomas Janssen - https://www.youtube.com/watch?v=A3WKdt_MNZQ&t=6s")
         
         if st.button("Clear Chat History"):
             st.session_state.messages = []
