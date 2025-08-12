@@ -90,7 +90,7 @@ def initialize_embeddings_and_retriever():
 def initialize_llm():
     """Initialize OpenAI LLM - cached to avoid re-initialization"""
     llm = ChatGoogleGenerativeAI(
-        model="gemini-pro",
+        model="gemini-1.5-flash",
         temperature=0,
         max_tokens=None,
         timeout=30,
