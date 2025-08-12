@@ -95,7 +95,10 @@ def initialize_llm():
         max_tokens=None,
         timeout=30,
         max_retries=3,
-)
+        google_api_key=GOOGLE_API_KEY
+    )
+    
+    return llm
 
 llm = initialize_llm()
 
