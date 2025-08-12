@@ -9,8 +9,9 @@ from pinecone.models import ServerlessSpec
 import streamlit as st
 
 # Get environment variables
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_API_KEY = "AIzaSyCu3tkstKi4AkznUxuHGfTmmucaCqkuhho"
+PINECONE_API_KEY = "pcsk_32nPYb_QEpPzLyBdoisRvfy5zmTP1ePgvJZ1qHvozYCSx8vUF7uMxAbhVN18tTwDDMmAyL"
+
 
 # Check for existence of keys
 if not PINECONE_API_KEY:
@@ -43,7 +44,7 @@ def main():
         print(f"Creating new index: {index_name}")
         pc.create_index(
             name=index_name,
-            dimension=1024,
+            dimension=768,
             metric="cosine",
             spec=ServerlessSpec(cloud="aws", region="us-east-1"),
         )
@@ -61,7 +62,10 @@ def main():
 
     # Initialise Vector Store
     print("Initializing vector store...")
-    vector_store = PineconeVectorStore(index=index, embedding=embeddings, text_key="text")
+    vector_store = PineconeVectorStore(index_name=index_name, 
+                                       embedding=embeddings, 
+                                       text_key="text", 
+                                       pinecone_api_key=PINECONE_API_KEY)
 
     # Initialise document organiser
     print(f"Loading PDF documents from {DATA_PATH}...")
