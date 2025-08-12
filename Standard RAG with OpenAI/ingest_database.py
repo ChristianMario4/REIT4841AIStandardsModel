@@ -9,8 +9,8 @@ from pinecone.models import ServerlessSpec
 import streamlit as st
 
 # Get environment variables
-GOOGLE_API_KEY = "AIzaSyCu3tkstKi4AkznUxuHGfTmmucaCqkuhho"
-PINECONE_API_KEY = "pcsk_32nPYb_QEpPzLyBdoisRvfy5zmTP1ePgvJZ1qHvozYCSx8vUF7uMxAbhVN18tTwDDMmAyL"
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 
 # Check for existence of keys
@@ -80,15 +80,24 @@ def main():
         length_function=len,
         is_separator_regex=False,
     )
-
+    
     chunks = text_splitter.split_documents(raw_documents)
     print(f"Created {len(chunks)} chunks")
+    print(f"Uploaded {len(chunks)} chunks with metadata to Pinecone!")
 
-    print("Generating unique IDs for chunks...")
-    uuids = [str(uuid4()) for _ in range(len(chunks))]
+    # Add unique IDs & metadata
+    metadatas = []
+    ids = []
+    for i, chunk in enumerate(chunks):
+        ids.append(str(uuid4()))
+        metadatas.append({
+            "source": chunk.metadata.get("source", "unknown"),
+            "page": chunk.metadata.get("page", "N/A"),
+            "chunk_index": i
+        })
 
     print("Uploading documents to Pinecone...")
-    vector_store.add_documents(documents=chunks, ids=uuids)
+    vector_store.add_documents(documents=chunks, ids=ids)
     print("Document ingestion completed successfully!")
 
 if __name__ == "__main__":

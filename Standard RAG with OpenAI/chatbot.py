@@ -128,8 +128,8 @@ def get_rag_response(message, chat_history):
         If the context does not fully answer the question, use your own general knowledge to fill in the gaps, 
         but clearly indicate which parts come from outside the provided context. 
 
-        Be accurate, clear, and concise in your responses.
-        Tell the user which document you are retrieving information from.
+        Be accurate, clear, and concise in your responses.  
+        When you provide information, clearly state which document or source (e.g., the title or name of the PDF) the information comes from.
 
         The question: {message}
 
@@ -137,6 +137,7 @@ def get_rag_response(message, chat_history):
 
         Knowledge: {knowledge}
         """
+
 
         # Invoke the response
         response = llm.invoke(rag_prompt)
