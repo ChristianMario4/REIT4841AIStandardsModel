@@ -8,18 +8,17 @@ from pinecone import Pinecone
 from pinecone.models import ServerlessSpec
 import streamlit as st
 
+# Get environment variables
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-# Initialise API_Keys for Pinecone DB and Google Gemini AI
-PINECONE_API_KEY = st.secrets.get("PINECONE_API_KEY")
-GOOGLE_API_KEY = st.secrets.get("GOOGLE_API_KEY")
-
-# Check for existence of key, and if not, error in the chatbot UI
+# Check for existence of keys
 if not PINECONE_API_KEY:
-    st.error("ERROR: PINECONE_API_KEY not functional, check Streamlit secrets")
-    st.stop()
+    print("ERROR: PINECONE_API_KEY not found. Set environment variable or update script.")
+    exit(1)
 if not GOOGLE_API_KEY:
-    st.error("ERROR: GOOGLE_API_KEY not functional, check Streamlit secrets")
-    st.stop()
+    print("ERROR: GOOGLE_API_KEY not found. Set environment variable or update script.")
+    exit(1)
 
 # Define DATA_PATH and do checks, assisted use of os developed with Claude
 DATA_PATH = r"data"
@@ -29,48 +28,64 @@ if not os.path.exists(DATA_PATH):
     st.info("Stopping chatbot")
     st.stop()
 
-# Initialise Pinecone
-pc = Pinecone(api_key=PINECONE_API_KEY)
-
-# Initialise the index for Pinecone DB -> code from Pinecone Docos
-# http://app.pinecone.io/organizations/-OWEHQS7XzaN5h_xkrqU/projects/96720a04-95b1-489f-b947-fab8f69ee540/create-index/serverless
-index_name = "reit4841-aistandards"
-
-if not pc.has_index(index_name):
-    st.info(f"Creating new index: {index_name}")
-    pc.create_index(
-        name=index_name,
-        dimension=1024,
-        metric="cosine",
-        spec=ServerlessSpec(cloud="aws", region="us-east-1"),
-    )
-    st.success("New index created")
+def main(): 
+    print("Starting document ingestion into Pinecone index")
     
-st.info(f"Using existing index: {index_name}")
-index = pc.Index(index_name)
+    # Initialise Pinecone
+    print("Initializing Pinecone...")
+    pc = Pinecone(api_key=PINECONE_API_KEY)
 
-# Initialise GoogleGeminiAI embeddings
-# Specify text_key as text to allow for referral to original text being used in response later
-embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
-                                          google_api_key=GOOGLE_API_KEY,
-                                          text_key = "text")
+    # Initialise the index for Pinecone DB -> code from Pinecone Docos
+    # http://app.pinecone.io/organizations/-OWEHQS7XzaN5h_xkrqU/projects/96720a04-95b1-489f-b947-fab8f69ee540/create-index/serverless
+    index_name = "reit4841-aistandards"
 
-# Initialise Vector Store
-vector_store = PineconeVectorStore(index=index, embedding=embeddings)
+    if not pc.has_index(index_name):
+        print(f"Creating new index: {index_name}")
+        pc.create_index(
+            name=index_name,
+            dimension=1024,
+            metric="cosine",
+            spec=ServerlessSpec(cloud="aws", region="us-east-1"),
+        )
+        print("New index created")
+    else:
+        print(f"Using existing index: {index_name}")
+    
+    index = pc.Index(index_name)
 
-# Initialise document organiser
-loader = PyPDFDirectoryLoader(DATA_PATH)
-raw_documents = loader.load()
+    # Initialise GoogleGeminiAI embeddings
+    # Specify text_key as text to allow for referral to original text being used in response later
+    print("Initializing embeddings...")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004",
+                                            google_api_key=GOOGLE_API_KEY)
 
-text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=300,
-    chunk_overlap=100,
-    length_function=len,
-    is_separator_regex=False,
-)
+    # Initialise Vector Store
+    print("Initializing vector store...")
+    vector_store = PineconeVectorStore(index=index, embedding=embeddings, text_key="text")
 
-chunks = text_splitter.split_documents(raw_documents)
+    # Initialise document organiser
+    print(f"Loading PDF documents from {DATA_PATH}...")
+    loader = PyPDFDirectoryLoader(DATA_PATH)
+    raw_documents = loader.load()
+    print(f"Loaded {len(raw_documents)} documents")
 
-uuids = [str(uuid4()) for _ in range(len(chunks))]
+    print("Splitting documents into chunks...")
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=300,
+        chunk_overlap=100,
+        length_function=len,
+        is_separator_regex=False,
+    )
 
-vector_store.add_documents(documents=chunks, ids=uuids)
+    chunks = text_splitter.split_documents(raw_documents)
+    print(f"Created {len(chunks)} chunks")
+
+    print("Generating unique IDs for chunks...")
+    uuids = [str(uuid4()) for _ in range(len(chunks))]
+
+    print("Uploading documents to Pinecone...")
+    vector_store.add_documents(documents=chunks, ids=uuids)
+    print("Document ingestion completed successfully!")
+
+if __name__ == "__main__":
+    main()
