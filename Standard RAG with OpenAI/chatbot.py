@@ -168,6 +168,7 @@ def main():
     # Sidebar with additional information
     with st.sidebar:
         st.markdown("### About")
+        st.markdown("This RAG LLM was developed for REIT4841 by Christian Almario")
         st.markdown("This chatbot uses:")
         st.markdown("- **Pinecone** for vector storage")
         st.markdown("- **Google Gemini** for LLM")
@@ -176,6 +177,10 @@ def main():
         st.markdown("### Settings")
         st.markdown(f"**Results per query:** {num_results}")
         st.markdown(f"**Similarity threshold:** {simscore_threshold}")
+
+        st.markdown("### Acknowledgements")
+        st.markdown("The following are inspirations for the development of this chatbot")
+        st.markdown("Thomas Janssen - https://www.youtube.com/watch?v=A3WKdt_MNZQ&t=6s")
         
         if st.button("Clear Chat History"):
             st.session_state.messages = []
