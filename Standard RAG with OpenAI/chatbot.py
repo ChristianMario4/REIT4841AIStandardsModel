@@ -127,7 +127,8 @@ def get_rag_response(message, chat_history):
         If the context does not fully answer the question, use your own general knowledge to fill in the gaps, 
         but clearly indicate which parts come from outside the provided context. 
 
-        Be accurate, clear, and concise in your responses.  
+        Be accurate, clear, and concise in your responses. But please provide with clear separation the text from the most similar batches
+        that were retrieved.  
         When you provide information, clearly state which document or source (e.g., the title or name of the PDF) the information comes from.
 
         The question: {message}
