@@ -39,8 +39,7 @@ if not pc.has_index(index_name):
         spec=ServerlessSpec(cloud="aws", region="us-east-1"),
     )
     st.success("New index created")
-    
-st.info(f"Using existing index: {index_name}")
+
 
 index = pc.Index(index_name)
 
@@ -90,7 +89,7 @@ def initialize_embeddings_and_retriever():
 def initialize_llm():
     """Initialize OpenAI LLM - cached to avoid re-initialization"""
     llm = ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
+        model="gemini-2.0-flash-exp",
         temperature=0,
         max_tokens=None,
         timeout=30,
