@@ -177,7 +177,7 @@ def main():
             # Create a placeholder for response
             message_placeholder = st.empty()
             
-            # Get chat history for context (excluding current message)
+            # Get chat history for context (excluding current message) -  generated and recommended by Claude (Sonnet 4.5)
             chat_history = [(msg["content"], st.session_state.messages[i+1]["content"]) 
                           for i, msg in enumerate(st.session_state.messages[:-1]) 
                           if msg["role"] == "user" and i+1 < len(st.session_state.messages)]
