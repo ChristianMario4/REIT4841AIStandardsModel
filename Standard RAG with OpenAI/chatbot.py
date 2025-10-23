@@ -118,7 +118,7 @@ def get_rag_response(message, chat_history):
             st.write(f"**Chunk {i}** (Score: {doc.metadata.get('score', 'N/A')})")
             st.write(f"Source: {doc.metadata.get('source', 'Unknown')}")
             st.write(f"Page: {doc.metadata.get('page_label', doc.metadata.get('page', 'N/A'))}")
-            st.write(f"Content preview: {doc.page_content}...")
+            st.write(f"Content preview: {doc.page_content}")
             st.write("---")
 
         # Add all the chunks to 'knowledge'
@@ -163,6 +163,7 @@ def get_rag_response(message, chat_history):
         IMPORTANT: You must list exactly {len(docs)} sources using a numbered list (1,2,3....) ONLY if you can answer the question
         IMPORTANT: If you cannot answer the question, there should be no list of retrieved chunks at all
         IMPORTANT: You should NEVER alter the contents of the excerpt from page_content when listing out the retrieved chunks
+        IMPORTANT: If you are going to answer a question, your response must use the excerpts from page_content, and you should not modify this page_content, especially for making lists
         
         The question: {message}
 
