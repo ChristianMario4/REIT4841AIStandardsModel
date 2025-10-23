@@ -64,7 +64,7 @@ def main():
     print("Initializing embeddings...")
     embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004",
                                             google_api_key=GOOGLE_API_KEY,
-                                            task_type="RETRIEVAL_QUERY")
+                                            task_type="RETRIEVAL_DOCUMENT")
 
     # Initialise Vector Store
     print("Initializing vector store...")
