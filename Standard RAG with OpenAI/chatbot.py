@@ -131,10 +131,17 @@ def get_rag_response(message, chat_history):
         you find do not match the context, or answer the questions appropriately, state this, and provide text that have similar
         contents to the prompt provided.
 
-        When you provide your response, can you format it so that it is your response, a new line, and then the list of the similar
-        chunks that you retrieved separated into dot points, stating the documents that they came from, the text, and the page label.
-        Can you ensure that the list items are the same amount as the size of k of the retriever.
+        When you provide your response, can you format it so that:
+        1. Your response
+        2. A a new line with "---"
+        3. A list of the similar chunks that you retrieved separated into dot points, stating the documents that they came from, the text, and the page label.
+        Can you ensure that the list items are the same amount as the size of {len(docs)}. Can the list be in the format:
+        - Document Name (from Document Metadata, including only everything after the data\/\)
+        - Page Number (from Document Metadata, labelled as page_label)
+        - Text (from Chunk Page Content)
 
+
+        
         The question: {message}
 
         Conversation history: {history_str}
