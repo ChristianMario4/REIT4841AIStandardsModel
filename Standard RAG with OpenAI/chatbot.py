@@ -144,19 +144,18 @@ def get_rag_response(message, chat_history):
         1. Your response
         2. A a new line with "---"
         3. A list of the similar chunks that you retrieved separated into dot points, stating the documents that they came from, the text, and the page label.
-        Can you ensure that the list items are the same amount as the size of {len(docs)}. Can the list be in the format:
-        - Document Name (from Document Metadata, including only everything after the data\/\)
-        - Page Number (from Document Metadata, labelled as page_label)
-        - Text (from Chunk Page Content)
+        Can you ensure that the list items are the same amount as the size of {len(docs)}. 
         
-        With the overall list appearing as a numbered list (each of the different texts):
+        With the overall list appearing as a numbered list ordered by the score metadata (each of the different texts):
         1. **Document Name:** [the filename after dat/]
         - **Page Number:** [page_label from metadata]
         - **Text:** "[the excerpt from page_content]"
+        - **Score:** [score from metadata]
         
         2. **Document Name:** [the filename after dat/]
         - **Page Number:** [page_label from metadata]
         - **Text:** "[the excerpt from page_content]"
+        - **Score:** [score from metadata]
         
         (continue for all {len(docs)} chunks)
         
@@ -165,6 +164,7 @@ def get_rag_response(message, chat_history):
         IMPORTANT: You should NEVER alter the contents of the excerpt from page_content when listing out the retrieved chunks
         IMPORTANT: If you are going to answer a question, your response must make use the excerpts from page_content, 
         and you should not modify this page_content in the overall list
+        IMPORTANT: The list of retrieved chunks should be in order of score
         
         
         The question: {message}
