@@ -131,9 +131,8 @@ def get_rag_response(message, chat_history):
         contents to the prompt provided.
 
         When you provide your response, can you format it so that it is your response, a new line, and then the list of the similar
-        chunks that you retrieved, stating the documents that they came from next to it so that it appears similar to:
-        
-        Document_Name: "Retrieved text"
+        chunks that you retrieved separated into dot points, stating the documents that they came from, the text, and the page label.
+        Can you ensure that the list items are the same amount as the size of k of the retriever.
 
         The question: {message}
 
