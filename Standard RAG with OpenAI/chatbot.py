@@ -4,6 +4,7 @@ from langchain_pinecone import PineconeVectorStore
 from langchain.schema import SystemMessage
 from pinecone import Pinecone
 from pinecone.models import ServerlessSpec
+from google.generativeai import types
 import asyncio
 import nest_asyncio
 import streamlit as st
@@ -51,11 +52,11 @@ num_results = 5
 simscore_threshold = 0.5
 
 # Fix to resolve re-current re-initialisation. Cache_resource makes sure this only occurs once.
-@st.cache_resource
+@st.cache_resource # Claude recommended bug fix for syncing error thrown by Streamlit
 def initialize_embeddings_and_retriever():
     
     """Setting asyncio event loop inside initialization so they run on the same thread"""
-    nest_asyncio.apply()
+    nest_asyncio.apply() # Claude recommended bug fix for syncing error thrown by Streamlit
     
     try:
         loop = asyncio.get_event_loop()
@@ -63,10 +64,12 @@ def initialize_embeddings_and_retriever():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
     
+    # Remaining code generated user
     # Initialise GoogleGeminiAI embeddings
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/text-embedding-004",  # 1024 dimensions
-        google_api_key=GOOGLE_API_KEY
+        google_api_key=GOOGLE_API_KEY,
+        config=types.types.EmbedContentConfig(task_type="RETRIEVAL_QUERY").embeddings
     )
     
     # Initialise and connect vector store
