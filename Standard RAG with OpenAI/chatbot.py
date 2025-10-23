@@ -253,6 +253,11 @@ def main():
         if st.button("Clear Chat History"):
             st.session_state.messages = []
             st.rerun()
+            
+        # Claude assisted code development for resolving Streamlit not refreshing
+        if st.button("Reset Retriever Settings"):
+            st.cache_resource.clear()
+            st.rerun()
 
 if __name__ == "__main__":
     main()
