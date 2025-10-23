@@ -141,9 +141,17 @@ def get_rag_response(message, chat_history):
         - Text (from Chunk Page Content)
         
         With the overall list appearing as a numbered list (each of the different texts):
-        1. Document Name
-        - Page Number
-        - Text
+        1. **Document Name:** [the filename after dat/]
+        - **Page Number:** [page_label from metadata]
+        - ""Text:"" [the excerpt from page_content]
+        
+        2. **Document Name:** [the filename after dat/]
+        - **Page Number:** [page_label from metadata]
+        - ""Text:"" [the excerpt from page_content]
+        
+        (continue for all {len(docs)} chunks)
+        
+        IMPORTANT: You must list exactly {len(docs)} sources using a numbered list (1,2,3....)
         
         The question: {message}
 
