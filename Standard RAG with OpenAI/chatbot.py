@@ -143,11 +143,11 @@ def get_rag_response(message, chat_history):
         With the overall list appearing as a numbered list (each of the different texts):
         1. **Document Name:** [the filename after dat/]
         - **Page Number:** [page_label from metadata]
-        - ""Text:"" [the excerpt from page_content]
+        - **Text:** [the excerpt from page_content]
         
         2. **Document Name:** [the filename after dat/]
         - **Page Number:** [page_label from metadata]
-        - ""Text:"" [the excerpt from page_content]
+        - **Text:** [the excerpt from page_content]
         
         (continue for all {len(docs)} chunks)
         
@@ -200,10 +200,14 @@ def main():
             # Create a placeholder for response
             message_placeholder = st.empty()
             
-            # Get chat history for context (excluding current message) -  generated and recommended by Claude (Sonnet 4.5)
-            chat_history = [(msg["content"], st.session_state.messages[i+1]["content"]) 
-                          for i, msg in enumerate(st.session_state.messages[:-1]) 
-                          if msg["role"] == "user" and i+1 < len(st.session_state.messages)]
+            # Get chat history for context (excluding current message) 
+            chat_history = [] 
+
+            # Grab chat history from 
+            for i, msg in enumerate(st.session_state.messages[:-1]):
+                if msg["role"] == "user":
+                    if (i + 1 < len(st.session_state.messages)) and st.session_state.messages[i + 1]["role"] == "assistant":
+                        chat_history.append((msg["content"], st.session_state.messages[i + 1]["content"]))
             
             # Get response from RAG system
             with st.spinner("Thinking..."):
