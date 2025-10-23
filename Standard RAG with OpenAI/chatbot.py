@@ -151,7 +151,8 @@ def get_rag_response(message, chat_history):
         
         (continue for all {len(docs)} chunks)
         
-        IMPORTANT: You must list exactly {len(docs)} sources using a numbered list (1,2,3....)
+        IMPORTANT: You must list exactly {len(docs)} sources using a numbered list (1,2,3....) ONLY if you can answer the question
+        IMPORTANT: If you cannot answer the question, there should be no list of retrieved chunks at all
         
         The question: {message}
 
