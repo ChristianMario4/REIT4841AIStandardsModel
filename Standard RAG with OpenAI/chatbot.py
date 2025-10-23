@@ -68,7 +68,7 @@ def initialize_embeddings_and_retriever():
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/text-embedding-004",  # 1024 dimensions
         google_api_key=GOOGLE_API_KEY,
-        task_type="RETRIEVAL_QUERY"
+        task_type="RETRIEVAL_DOCUMENT"
     )
     
     # Initialise and connect vector store
