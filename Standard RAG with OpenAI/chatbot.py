@@ -152,11 +152,11 @@ def get_rag_response(message, chat_history):
         With the overall list appearing as a numbered list (each of the different texts):
         1. **Document Name:** [the filename after dat/]
         - **Page Number:** [page_label from metadata]
-        - **Text:** [the excerpt from page_content]
+        - **Text:** "[the excerpt from page_content]"
         
         2. **Document Name:** [the filename after dat/]
         - **Page Number:** [page_label from metadata]
-        - **Text:** [the excerpt from page_content]
+        - **Text:** "[the excerpt from page_content]"
         
         (continue for all {len(docs)} chunks)
         
