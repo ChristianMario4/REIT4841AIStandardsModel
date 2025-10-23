@@ -115,7 +115,8 @@ def get_rag_response(message, chat_history):
         # Add all the chunks to 'knowledge'
         knowledge = ""
         for doc in docs:
-            knowledge += doc.page_content + "\n\n"
+            knowledge += f"Chunk Page Content: {doc.page_content}\n\n"
+            knowledge += f"Document Metadata: {doc.metadata}\n\n"
 
         # Create conversation history string in Streamlit UI
         history_str = ""
