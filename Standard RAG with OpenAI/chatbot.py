@@ -111,6 +111,15 @@ def get_rag_response(message, chat_history):
         
         # Retrieve the relevant chunks based on the question asked
         docs = retriever.invoke(message)
+        
+        # Debugging chunk recommended by Claude to verify contents
+        st.write("### 🔍 Debug - Retrieved Chunks:")
+        for i, doc in enumerate(docs, 1):
+            st.write(f"**Chunk {i}** (Score: {doc.metadata.get('score', 'N/A')})")
+            st.write(f"Source: {doc.metadata.get('source', 'Unknown')}")
+            st.write(f"Page: {doc.metadata.get('page_label', doc.metadata.get('page', 'N/A'))}")
+            st.write(f"Content preview: {doc.page_content[:300]}...")
+            st.write("---")
 
         # Add all the chunks to 'knowledge'
         knowledge = ""
