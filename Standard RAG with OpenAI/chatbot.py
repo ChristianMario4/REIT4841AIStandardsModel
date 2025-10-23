@@ -163,7 +163,8 @@ def get_rag_response(message, chat_history):
         IMPORTANT: If you cannot answer the question, there should be no list of retrieved chunks at all
         IMPORTANT: You should NEVER alter the contents of the excerpt from page_content when listing out the retrieved chunks
         IMPORTANT: If you are going to answer a question, your response must make use the excerpts from page_content, 
-        and you should not modify this page_content in the overall list
+        and you should not modify this page_content in the overall list. But do ensure that the sentences flow and make sense and
+        references to different page_content excerpts are not just listed one after another.
         IMPORTANT: The list of retrieved chunks should be in order of score
         
         
