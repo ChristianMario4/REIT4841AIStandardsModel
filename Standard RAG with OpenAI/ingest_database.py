@@ -53,12 +53,18 @@ def main():
         print(f"Using existing index: {index_name}")
     
     index = pc.Index(index_name)
+    
+    # Clear the index for re-filling
+    print("Emptying index contents for new data to come in")
+    index.delete(delete_all=True)
+    print("Successfully deleted existing vectors")
 
     # Initialise GoogleGeminiAI embeddings
     # Specify text_key as text to allow for referral to original text being used in response later
     print("Initializing embeddings...")
     embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004",
-                                            google_api_key=GOOGLE_API_KEY)
+                                            google_api_key=GOOGLE_API_KEY,
+                                            task_type="RETRIEVAL_QUERY")
 
     # Initialise Vector Store
     print("Initializing vector store...")
