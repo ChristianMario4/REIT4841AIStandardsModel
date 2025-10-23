@@ -162,9 +162,9 @@ def get_rag_response(message, chat_history):
         IMPORTANT: You must list exactly {len(docs)} sources using a numbered list (1,2,3....) ONLY if you can answer the question
         IMPORTANT: If you cannot answer the question, there should be no list of retrieved chunks at all
         IMPORTANT: You should NEVER alter the contents of the excerpt from page_content when listing out the retrieved chunks
-        IMPORTANT: If you are going to answer a question, your response must make use the excerpts from page_content, 
-        and you should not modify this page_content in the overall list. But do ensure that the sentences flow and make sense and
-        references to different page_content excerpts are not just listed one after another.
+        IMPORTANT: When answering a question, use only excerpts in page_content without modifying them. Ensure your response reads naturally
+        and integrates the excerpts smoothly, rather than listing them in order. Do not draw your own conclusions beyond what the excerpts
+        support.
         IMPORTANT: The list of retrieved chunks should be in order of score
         
         
