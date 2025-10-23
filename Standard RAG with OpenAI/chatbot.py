@@ -139,8 +139,11 @@ def get_rag_response(message, chat_history):
         - Document Name (from Document Metadata, including only everything after the data\/\)
         - Page Number (from Document Metadata, labelled as page_label)
         - Text (from Chunk Page Content)
-
-
+        
+        With the overall list appearing as a numbered list (each of the different texts):
+        1. Document Name
+        - Page Number
+        - Text
         
         The question: {message}
 
