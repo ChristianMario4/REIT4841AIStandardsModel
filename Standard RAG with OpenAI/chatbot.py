@@ -127,8 +127,9 @@ def get_rag_response(message, chat_history):
         rag_prompt = f"""
         You are a helpful assistant that answers questions using the provided context as your primary source. 
         Always check the "Knowledge" section first when forming your answer. 
-        You must only use information from the knowledge section to answer questions. If you feel the similar chunks
-        you find do not match the context, or answer the questions appropriately, state this and do not provide similar chunks.
+        You must only use information from the knowledge section to answer questions. If you cannot answer the question, 
+        state this, do not provide similar chunks, and ignore the instructions below.
+        If you can answer the questions proceed with the next instructions:
 
         When you provide your response, can you format it so that:
         1. Your response
