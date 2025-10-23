@@ -4,7 +4,6 @@ from langchain_pinecone import PineconeVectorStore
 from langchain.schema import SystemMessage
 from pinecone import Pinecone
 from pinecone.models import ServerlessSpec
-from google.generativeai import types
 import asyncio
 import nest_asyncio
 import streamlit as st
@@ -69,7 +68,7 @@ def initialize_embeddings_and_retriever():
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/text-embedding-004",  # 1024 dimensions
         google_api_key=GOOGLE_API_KEY,
-        config=types.types.EmbedContentConfig(task_type="RETRIEVAL_QUERY").embeddings
+        task_type="RETRIEVAL_QUERY"
     )
     
     # Initialise and connect vector store
@@ -104,7 +103,7 @@ def initialize_llm():
 
 llm = initialize_llm()
 
-# Function to get response from RAG system (Fixed for Streamlit)
+# Function to get response from RAG system (Fixed by Claude for Streamlit)
 def get_rag_response(message, chat_history):
     try:
         # Get the retriever (this will use cached version after first call)
@@ -118,7 +117,7 @@ def get_rag_response(message, chat_history):
         for doc in docs:
             knowledge += doc.page_content + "\n\n"
 
-        # Create conversation history string
+        # Create conversation history string in Streamlit UI
         history_str = ""
         for human_msg, ai_msg in chat_history:
             history_str += f"Human: {human_msg}\nAssistant: {ai_msg}\n"
@@ -127,12 +126,14 @@ def get_rag_response(message, chat_history):
         rag_prompt = f"""
         You are a helpful assistant that answers questions using the provided context as your primary source. 
         Always check the "Knowledge" section first when forming your answer. 
-        If the context does not fully answer the question, use your own general knowledge to fill in the gaps, 
-        but clearly indicate which parts come from outside the provided context. 
+        You must only use information from the knowledge section to answer questions. If you feel the similar chunks
+        you find do not match the context, or answer the questions appropriately, state this, and provide text that have similar
+        contents to the prompt provided.
 
-        Be accurate, clear, and concise in your responses. But please provide with clear separation the text from the most similar batches
-        that were retrieved.  
-        When you provide information, clearly state which document or source (e.g., the title or name of the PDF) the information comes from.
+        When you provide your response, can you format it so that it is your response, a new line, and then the list of the similar
+        chunks that you retrieved, stating the documents that they came from next to it so that it appears similar to:
+        
+        Document_Name: "Retrieved text"
 
         The question: {message}
 
