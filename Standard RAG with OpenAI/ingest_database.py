@@ -82,7 +82,7 @@ def main():
     print("Splitting documents into chunks...")
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
-        chunk_overlap=100,
+        chunk_overlap=50,
         length_function=len,
         is_separator_regex=False,
     )
