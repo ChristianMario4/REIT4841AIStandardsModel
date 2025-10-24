@@ -179,6 +179,11 @@ def get_rag_response(message, chat_history):
         Conversation history: {history_str}
 
         Knowledge: {knowledge}
+        
+        
+        FINAL INSTRUCTION: Review the Knowledge Section above. 
+        Does it contain substantive text content that answers the question? 
+        If NO, respond: "I cannot answer this question based on the provided documents."
         """
 
 
