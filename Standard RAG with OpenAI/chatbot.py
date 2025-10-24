@@ -137,9 +137,11 @@ def get_rag_response(message, chat_history):
         rag_prompt = f"""
         You are a helpful assistant that answers questions using the provided context as your primary source. 
         Always check the "Knowledge" section first when forming your answer. 
-        You must only use information from the knowledge section to answer questions. If you cannot answer the question, 
-        state this and do not provide similar chunks or a new line.
-        If you can answer the questions proceed with the next instructions:
+        You must STRICLY use ONLY information from the knowledge section to answer questions. 
+        Do not use any external knowledge, prior training data, or general knowledge.
+        If the answer is not explicitly in the knowledge section, you must state: "I cannot answer this question based on the provided documents."
+        
+        If you can answer the questions based solely on the Knowledge section, proceed with the next isntructions:
 
         When you provide your response, can you format it so that:
         1. Your response
@@ -160,13 +162,16 @@ def get_rag_response(message, chat_history):
         
         (continue for all {len(docs)} chunks)
         
-        IMPORTANT: You must list exactly {len(docs)} sources using a numbered list (1,2,3....) ONLY if you can answer the question
-        IMPORTANT: If you cannot answer the question, there should be no list of retrieved chunks at all
-        IMPORTANT: You should NEVER alter the contents of the excerpt from page_content when listing out the retrieved chunks
-        IMPORTANT: When answering a question, use only excerpts in page_content without modifying them. Ensure your response reads naturally
+        CRITICAL INSTRUCTIONS:
+        - You must list exactly {len(docs)} sources using a numbered list (1,2,3....) ONLY if you can answer the question
+        - If you cannot answer the question based on the Knowledge section, there should be no list of retrieved chunks at all
+        - You should NEVER alter the contents of the excerpt from page_content when listing out the retrieved chunks
+        - When answering a question, use only excerpts in page_content without modifying them. Ensure your response reads naturally
         and integrates the excerpts smoothly, rather than listing them in order. Do not draw your own conclusions beyond what the excerpts
-        support.
-        IMPORTANT: The list of retrieved chunks should be in order of score
+        support
+        - Do not add information from your own conclusions beyond what the excerpts explicitly support
+        - The list of retrieved chunks should be in order of score
+        - If the Knowledge section does not contain enough information to fully answer the question, state what information is missing
         
         
         The question: {message}
