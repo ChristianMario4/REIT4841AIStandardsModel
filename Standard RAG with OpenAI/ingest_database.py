@@ -9,8 +9,8 @@ from pinecone.models import ServerlessSpec
 import streamlit as st
 
 # Get environment variables
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_API_KEY = "AIzaSyCu3tkstKi4AkznUxuHGfTmmucaCqkuhho"
+PINECONE_API_KEY = "pcsk_32nPYb_QEpPzLyBdoisRvfy5zmTP1ePgvJZ1qHvozYCSx8vUF7uMxAbhVN18tTwDDMmAyL"
 
 
 # Check for existence of keys
@@ -81,7 +81,7 @@ def main():
 
     print("Splitting documents into chunks...")
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
+        chunk_size=300,
         chunk_overlap=50,
         length_function=len,
         is_separator_regex=False,
