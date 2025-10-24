@@ -135,8 +135,8 @@ def get_rag_response(message, chat_history):
 
         # Make the call to the LLM (including prompt)
         rag_prompt = f"""
-        You are a helpful assistant that answers questions using the provided context as your primary source. 
-        Always check the "Knowledge" section first when forming your answer. 
+        You are a helpful assistant that answers questions using ONLY the provided context below.
+        You DO NOT have access to any other knowledge or information beyond what is explicitly provided in the "Knowledge" section.
         You must STRICLY use ONLY information from the knowledge section to answer questions. 
         Do not use any external knowledge, prior training data, or general knowledge.
         If the answer is not explicitly in the knowledge section, you must state: "I cannot answer this question based on the provided documents."
