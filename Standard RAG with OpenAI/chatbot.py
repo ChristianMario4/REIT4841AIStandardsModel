@@ -2,6 +2,9 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain.schema import SystemMessage
+from langchain_core.documents import Document
+from langchain_core.runnables import chain
+from typing import List
 from pinecone import Pinecone
 from pinecone.models import ServerlessSpec
 import asyncio
@@ -78,12 +81,13 @@ def initialize_embeddings_and_retriever():
         text_key="text"
     )
     
-    # Set up the vectorstore to be the retriever
-    retriever = vector_store.as_retriever(
-        search_type="similarity_score_threshold",
-        search_kwargs={"k": num_results, "score_threshold": simscore_threshold}
-    )
-    
+    @chain
+    def retriever(query: str) -> List[Document]:
+        docs, scores = zip(*vector_store.similarity_search_with_score(query, k=num_results))
+        for doc, score in zip(docs, scores):
+            doc.metadata["score"] = score
+        return list(docs)
+
     return retriever
 
 # Initialize LLM
@@ -112,9 +116,15 @@ def get_rag_response(message, chat_history):
         # Retrieve the relevant chunks based on the question asked
         docs = retriever.invoke(message)
         
+        # Filtering the documents based on their scores
+        filtered_docs = []
+        for doc in docs:
+            if doc.metadata.get('score', 0) >= simscore_threshold:
+                filtered_docs.append(doc)
+        
         # Debugging chunk recommended by Claude to verify contents
         st.write("### 🔍 Debug - Retrieved Chunks:")
-        for i, doc in enumerate(docs, 1):
+        for i, doc in enumerate(filtered_docs, 1):
             st.write(f"**Chunk {i}** (Score: {doc.metadata.get('score', 'N/A')})")
             st.write(f"Source: {doc.metadata.get('source', 'Unknown')}")
             st.write(f"Page: {doc.metadata.get('page_label', doc.metadata.get('page', 'N/A'))}")
@@ -124,7 +134,7 @@ def get_rag_response(message, chat_history):
 
         # Add all the chunks to 'knowledge'
         knowledge = ""
-        for doc in docs:
+        for doc in filtered_docs:
             knowledge += f"Chunk Page Content: {doc.page_content}\n\n"
             knowledge += f"Document Metadata: {doc.metadata}\n\n"
 
@@ -147,7 +157,7 @@ def get_rag_response(message, chat_history):
         1. Your response
         2. A a new line with "---"
         3. A list of the similar chunks that you retrieved separated into dot points, stating the documents that they came from, the text, and the page label.
-        Can you ensure that the list items are the same amount as the size of {len(docs)}. 
+        Can you ensure that the list items are the same amount as the size of {len(filtered_docs)}. 
         
         With the overall list appearing as a numbered list ordered by the score metadata (each of the different texts):
         1. **Document Name:** [the filename after dat/]
@@ -160,12 +170,12 @@ def get_rag_response(message, chat_history):
         - **Text:** "[the excerpt from page_content]"
         - **Score:** [score from metadata]
         
-        (continue for all {len(docs)} chunks)
+        (continue for all {len(filtered_docs)} chunks)
         
         CRITICAL INSTRUCTIONS:
         - NEVER make up or modify the score values - use the EXACT score from metadata
         - The score in the metadata is the REAL similarity score from the vector database
-        - You must list exactly {len(docs)} sources using a numbered list (1,2,3....) ONLY if you can answer the question
+        - You must list exactly {len(filtered_docs)} sources using a numbered list (1,2,3....) ONLY if you can answer the question
         - If you cannot answer the question based on the Knowledge section, there should be no list of retrieved chunks at all
         - You should NEVER alter the contents of the excerpt from page_content when listing out the retrieved chunks
         - When answering a question, use only excerpts in page_content without modifying them. Ensure your response reads naturally
