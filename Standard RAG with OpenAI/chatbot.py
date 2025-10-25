@@ -81,6 +81,7 @@ def initialize_embeddings_and_retriever():
         text_key="text"
     )
     
+    #From: https://python.langchain.com/docs/how_to/add_scores_retriever/
     @chain
     def retriever(query: str) -> List[Document]:
         docs, scores = zip(*vector_store.similarity_search_with_score(query, k=num_results))
