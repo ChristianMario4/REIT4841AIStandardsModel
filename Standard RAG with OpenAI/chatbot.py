@@ -163,6 +163,8 @@ def get_rag_response(message, chat_history):
         (continue for all {len(docs)} chunks)
         
         CRITICAL INSTRUCTIONS:
+        - NEVER make up or modify the score values - use the EXACT score from metadata
+        - The score in the metadata is the REAL similarity score from the vector database
         - You must list exactly {len(docs)} sources using a numbered list (1,2,3....) ONLY if you can answer the question
         - If you cannot answer the question based on the Knowledge section, there should be no list of retrieved chunks at all
         - You should NEVER alter the contents of the excerpt from page_content when listing out the retrieved chunks
