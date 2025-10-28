@@ -50,8 +50,8 @@ index = pc.Index(index_name)
 
 
 # Configuration for embeddings and retrieval
-num_results = 7
-simscore_threshold = 0.5
+num_results = 5
+simscore_threshold = 0.3
 
 # Fix to resolve re-current re-initialisation. Cache_resource makes sure this only occurs once.
 @st.cache_resource # Claude recommended bug fix for syncing error thrown by Streamlit
