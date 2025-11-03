@@ -1,7 +1,6 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
-from langchain.schema import SystemMessage
 from langchain_core.documents import Document
 from langchain_core.runnables import chain
 from typing import List
@@ -51,7 +50,7 @@ index = pc.Index(index_name)
 
 # Configuration for embeddings and retrieval
 num_results = 5
-simscore_threshold = 0.5
+simscore_threshold = 0.5    
 
 # Fix to resolve re-current re-initialisation. Cache_resource makes sure this only occurs once.
 @st.cache_resource # Claude recommended bug fix for syncing error thrown by Streamlit
@@ -152,7 +151,7 @@ def get_rag_response(message, chat_history):
         Do not use any external knowledge, prior training data, or general knowledge.
         If the answer is not explicitly in the knowledge section, you must state: "I cannot answer this question based on the provided documents."
         
-        If you can answer the questions based solely on the Knowledge section, proceed with the next isntructions:
+        If you can answer the questions based solely on the Knowledge section, proceed with the next instructions:
 
         When you provide your response, can you format it so that:
         1. Your response
