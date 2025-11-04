@@ -49,7 +49,7 @@ index = pc.Index(index_name)
 
 
 # Configuration for embeddings and retrieval
-num_results = 5
+num_results = 7
 simscore_threshold = 0.5    
 
 # Fix to resolve re-current re-initialisation. Cache_resource makes sure this only occurs once.
